@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Header from "../component/Header";
+import Header from "../../component/guest/Header";
 import { Link } from "react-router-dom";
 
 const CoworkingsPage = () => {

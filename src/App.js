@@ -1,8 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import HomePage from "./page/HomePage";
-import CoworkingsPage from "./page/CoworkingsPage";
-import CoworkingDetailsPage from "./page/CoworkingDetailsPage";
+import HomePage from "./page/guest/HomePage";
+import CoworkingsPage from "./page/guest/CoworkingsPage";
+import CoworkingDetailsPage from "./page/guest/CoworkingDetailsPage";
+import DashboardPage from "./page/admin/DashboardPage";
 
 function App() {
   return (
@@ -11,6 +12,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/coworkings" element={<CoworkingsPage />} />
         <Route path="/coworking/details/:id" element={<CoworkingDetailsPage />} />
+
+        <Route path="/admin/" element={<DashboardPage />} />
       </Routes>
     </BrowserRouter>
   );
