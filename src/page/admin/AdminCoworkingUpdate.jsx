@@ -5,18 +5,73 @@ const AdminCoworkingUpdate = () => {
   const { id } = useParams();
   const [coworking, setCoworking] = useState(null);
 
+  const [message, setMessage] = useState(null);
+
   useEffect(() => {
     (async () => {
       const coworkingResponse = await fetch("http://localhost:3005/api/coworkings/" + id);
       const coworkingResponseData = await coworkingResponse.json();
+
       setCoworking(coworkingResponseData.data);
     })();
   }, []);
 
+  const handleUpdateCoworking = async (event) => {
+    event.preventDefault();
+
+    const name = event.target.name.value;
+    const priceByMonth = event.target.priceByMonth.value;
+    const priceByDay = event.target.priceByDay.value;
+    const priceByHour = event.target.priceByHour.value;
+    const addressNumber = event.target.addressNumber.value;
+    const addressStreet = event.target.addressStreet.value;
+    const addressCity = event.target.addressCity.value;
+    const addressPostcode = event.target.addressPostcode.value;
+    const superficy = event.target.superficy.value;
+    const capacity = event.target.capacity.value;
+
+    const coworkingUpdateData = {
+      name: name,
+      price: {
+        month: priceByMonth,
+        day: priceByDay,
+        hour: priceByHour,
+      },
+      address: {
+        number: addressNumber,
+        street: addressStreet,
+        city: addressCity,
+        postCode: addressPostcode,
+      },
+      superficy: superficy,
+      capacity: capacity,
+    };
+
+    const coworkingUpdateDataJson = JSON.stringify(coworkingUpdateData);
+
+    const token = localStorage.getItem("jwt");
+
+    const updateCoworkingResponse = await fetch("http://localhost:3005/api/coworkings/" + id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: coworkingUpdateDataJson,
+    });
+
+    if (updateCoworkingResponse.status === 201) {
+      setMessage("Mise à jour OK");
+    } else {
+      setMessage("Erreur");
+    }
+  };
+
   return (
     <div>
+      <>{message && <p>{message}</p>}</>
       {coworking && (
-        <form>
+        <form onSubmit={handleUpdateCoworking}>
           <div>
             <label>
               Nom
