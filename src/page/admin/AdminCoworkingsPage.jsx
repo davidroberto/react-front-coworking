@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import HeaderAdmin from "../../component/admin/HeaderAdmin";
+import { jwtDecode } from "jwt-decode";
 
 const AdminCoworkingsPage = () => {
   const [coworkings, setCoworkings] = useState(null);
+  const token = localStorage.getItem("jwt");
+  const decodedToken = jwtDecode(token);
 
   useEffect(() => {
     (async () => {
@@ -13,8 +16,6 @@ const AdminCoworkingsPage = () => {
   }, []);
 
   const handleDeleteCoworking = async (event, coworkingId) => {
-    const token = localStorage.getItem("jwt");
-
     await fetch("http://localhost:3005/api/coworkings/" + coworkingId, {
       method: "DELETE",
       headers: { Authorization: "Bearer " + token },
@@ -36,7 +37,9 @@ const AdminCoworkingsPage = () => {
             return (
               <article>
                 <h2>{coworking.name}</h2>
-                <button onClick={(event) => handleDeleteCoworking(event, coworking.id)}>Supprimer</button>
+                {decodedToken.data.role !== 3 && (
+                  <button onClick={(event) => handleDeleteCoworking(event, coworking.id)}>Supprimer</button>
+                )}
               </article>
             );
           })}
