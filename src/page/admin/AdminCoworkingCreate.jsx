@@ -1,7 +1,10 @@
 import { useState } from "react";
 import HeaderAdmin from "../../component/admin/HeaderAdmin";
+import { useVerifyIfUserIsLogged } from "../../utils/security-utils";
 
 const AdminCoworkingCreate = () => {
+  useVerifyIfUserIsLogged();
+
   // je créé un stage pour afficher un message de succès ou d'erreur
   const [message, setMessage] = useState(null);
 
