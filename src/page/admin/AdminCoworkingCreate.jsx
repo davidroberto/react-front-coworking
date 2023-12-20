@@ -5,72 +5,69 @@ import { useVerifyIfUserIsLogged } from "../../utils/security-utils";
 const AdminCoworkingCreate = () => {
   useVerifyIfUserIsLogged();
 
-  // je créé un stage pour afficher un message de succès ou d'erreur
   const [message, setMessage] = useState(null);
 
-  // je créé une fonction appelé par mon event listener
-  // pour créé un coworking
-  // la fonction est asynchrone, car on fait un fetch à l'intérieur
   const handleCreateCoworking = async (event) => {
-    // j'empêche le rechargement par défaut de la page au submit
     event.preventDefault();
 
-    // je récupère les valeurs du form
     const name = event.target.name.value;
     const priceByMonth = event.target.priceByMonth.value;
     const priceByDay = event.target.priceByDay.value;
     const priceByHour = event.target.priceByHour.value;
-    const addressNumber = event.target.addressNumber.value;
-    const addressStreet = event.target.addressStreet.value;
-    const addressCity = event.target.addressCity.value;
-    const addressPostcode = event.target.addressPostcode.value;
-    const superficy = event.target.superficy.value;
-    const capacity = event.target.capacity.value;
+    // const addressNumber = event.target.addressNumber.value;
+    // const addressStreet = event.target.addressStreet.value;
+    // const addressCity = event.target.addressCity.value;
+    // const addressPostcode = event.target.addressPostcode.value;
+    // const superficy = event.target.superficy.value;
+    // const capacity = event.target.capacity.value;
 
-    // je créé un objet avec les valeurs
-    // qui correspond à ce que l'api attend (modèle / table)
-    // les noms doivent correspondre
-    // et les types aussi
-    const coworkingToCreate = {
-      name: name,
-      price: {
-        month: priceByMonth,
-        day: priceByDay,
-        hour: priceByHour,
-      },
-      address: {
-        number: addressNumber,
-        street: addressStreet,
-        city: addressCity,
-        postCode: addressPostcode,
-      },
-      superficy: superficy,
-      capacity: capacity,
+    // const coworkingToCreate = {
+    //   name: name,
+    const price = {
+      month: parseInt(priceByMonth),
+      day: parseInt(priceByDay),
+      hour: parseInt(priceByHour),
     };
+    //   address: {
+    //     number: addressNumber,
+    //     street: addressStreet,
+    //     city: addressCity,
+    //     postCode: addressPostcode,
+    //   },
+    //   superficy: superficy,
+    //   capacity: capacity,
+    // };
 
-    // je transforme mon objet en JSON
-    const coworkingToCreateJson = JSON.stringify(coworkingToCreate);
+    // const coworkingToCreateJson = JSON.stringify(coworkingToCreate);
 
-    // je récupère mon token en local storage
+    // je créé un objet "FormData" => ça me permet d'envoyer
+    // à mon api à la fois des infos JSON (text, number etc)
+    // et des fichiers
+    const formData = new FormData();
+
+    // dans mon formdata, je créé un champs name, qui contient
+    // le nom issu du champs "name", transformé en json
+    formData.append("name", JSON.stringify(name));
+    formData.append("price", JSON.stringify(price));
+    // dans mon formData, je créé un champs file, qui contient
+    // le fichier issu du champs image
+    formData.append("file", event.target.image.files[0]);
+
     const token = localStorage.getItem("jwt");
 
-    // je fais mon appel fetch
-    // sur l'url de création des coworkings
-    // de type POST
-    // avec en header Bearer authorization le token
-    // et en body les données pour créer le coworking
-    const createCoworkingResponse = await fetch("http://localhost:3005/api/coworkings", {
+    const createCoworkingResponse = await fetch("http://localhost:3005/api/coworkings/withImg", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        // vu que j'envoie un formData (car j'ai des fichiers)
+        // le contenu du body n'est plus du JSON pur
+        // donc je commente la ligne
+        // "Content-Type": "application/json",
         Authorization: "Bearer " + token,
       },
-      body: coworkingToCreateJson,
+      // j'envoie mon formData en body
+      body: formData,
     });
 
-    // si la réponse de création du coworking a un status 201
-    // je créé un message de succès
-    // sinon d'erreur
     if (createCoworkingResponse.status === 201) {
       setMessage("Coworking créé !");
     } else {
@@ -141,6 +138,13 @@ const AdminCoworkingCreate = () => {
           <label>
             Capacité
             <input type="number" name="capacity" />
+          </label>
+        </div>
+
+        <div>
+          <label>
+            Image
+            <input type="file" name="image" />
           </label>
         </div>
 
