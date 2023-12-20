@@ -1,4 +1,5 @@
 import { useState } from "react";
+import HeaderAdmin from "../../component/admin/HeaderAdmin";
 
 const AdminCoworkingCreate = () => {
   // je créé un stage pour afficher un message de succès ou d'erreur
@@ -76,6 +77,7 @@ const AdminCoworkingCreate = () => {
 
   return (
     <>
+      <HeaderAdmin />
       {message && <p>{message}</p>}
       <form onSubmit={handleCreateCoworking}>
         <div>

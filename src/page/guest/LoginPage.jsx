@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [message, setMessage] = useState(null);
+  const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -30,6 +32,7 @@ const LoginPage = () => {
     if (token) {
       localStorage.setItem("jwt", token);
       setMessage("Vous êtes bien connecté");
+      navigate("/admin/");
     } else {
       setMessage("Erreur lors de la connexion");
     }
