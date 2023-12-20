@@ -29,6 +29,39 @@ const AdminCoworkingsPage = () => {
     setCoworkings(coworkingsResponseData);
   };
 
+  // je créé une fonction, qui récupère un  id de coworking
+  // et qui va créer sur l'api une review
+  const handleCreateReview = async (event, coworkingId) => {
+    event.preventDefault();
+
+    // je récupère les valeurs du formulaire
+    const content = event.target.content.value;
+    const rating = event.target.rating.value;
+
+    // je créé un objet avec les valeurs du formulaire
+    // + l'id du coworking passé en parametre
+    const reviewToCreate = {
+      content: content,
+      rating: rating,
+      CoworkingId: coworkingId,
+    };
+
+    // je transforme en JSON mon objet
+    const reviewToCreateJson = JSON.stringify(reviewToCreate);
+
+    // je fais mon appel fetch sur la création d'une review
+    // en passant le token en authorization
+    // et le le json avec les données du form (et l'id du coworking)
+    await fetch("http://localhost:3005/api/reviews", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: reviewToCreateJson,
+    });
+  };
+
   return (
     <>
       <HeaderAdmin />
@@ -43,6 +76,24 @@ const AdminCoworkingsPage = () => {
                 {decodedToken.data.role !== 3 && (
                   <button onClick={(event) => handleDeleteCoworking(event, coworking.id)}>Supprimer</button>
                 )}
+                {/* 
+                je créé un form pour chaque coworking 
+                et au submit j'appelle la fonction handleCreateReview
+                en lui passant l'id du coworking actuel
+                */}
+                <form onSubmit={(event) => handleCreateReview(event, coworking.id)}>
+                  <label>
+                    Review: contenu
+                    <input type="text" name="content" />
+                  </label>
+
+                  <label>
+                    Review: note
+                    <input type="number" name="rating" />
+                  </label>
+
+                  <input type="submit" />
+                </form>
               </article>
             );
           })}
